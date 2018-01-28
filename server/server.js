@@ -1,7 +1,7 @@
-
 var express = require('express');
 var bodyParser = require('body-parser');
-const {ObjectID} = require('mongodb');
+var {ObjectID} = require('mongodb');
+
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
@@ -25,43 +25,31 @@ app.post('/todos', (req, res) => {
 app.get('/todos', (req, res) => {
   Todo.find().then((todos) => {
     res.send({todos});
-  }, (e) =>{
+  }, (e) => {
     res.status(400).send(e);
-  })
+  });
 });
 
 app.get('/todos/:id', (req, res) => {
   var id = req.params.id;
 
-  if(!ObjectID.isValid(id)){
-   return res.status(404).send({});
+  if (!ObjectID.isValid(id)) {
+    return res.status(404).send();
   }
-  
-  Todo.findById(id).then((doc) =>{
-    if(!doc){
-      return res.status(400).send({});
-     }
-    res.send(doc);
+
+  Todo.findById(id).then((todo) => {
+    if (!todo) {
+      return res.status(404).send();
+    }
+
+    res.send({todo});
   }).catch((e) => {
-    return res.status(400);
-
-  })
-
-  //validate id if valid then respond 404
-    // send empty body
-
-  //findbyId
-    // success
-      // if todo send back
-      // if no todo - send back a 404 with empty body
-    // error
-      // 400 -- 
+    res.status(400).send();
+  });
 });
 
 app.listen(3000, () => {
   console.log('Started on port 3000');
 });
 
-module.exports = {
-  app
-}
+module.exports = {app};
