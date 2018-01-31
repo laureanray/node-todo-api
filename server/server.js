@@ -19,7 +19,7 @@ app.post('/todos', (req, res) => {
     text: req.body.text
   });
 
-  todo.save().then((doc) => {
+  Todo.save().then((doc) => {
     res.send(doc);
   }, (e) => {
     res.status(400).send(e);
@@ -94,6 +94,18 @@ app.patch('/todos/:id', (req, res) => {
   }).catch((e) => {
     res.status(400).send();
   })
+});
+
+app.post('/users', (req, res) => {
+  var usr = _.pick(req.body, ['email', 'password']);
+  var user = new User({
+    email: usr.email,
+    password: usr.password
+  });
+  console.log(usr.email);
+  user.save().then((doc) => {
+    res.status(200).send(doc);
+  }, (e) => res.status(400).send(e));
 });
 
 app.listen(port, () => {
